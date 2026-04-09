@@ -1,0 +1,2556 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Экран поездки — Tutu прототип</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="https://www.figma.com/api/mcp/asset/a49d8f61-3170-4ad9-8da0-d51c11c692a0">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #C8C8D0;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 32px 0;
+      font-family: 'Inter', -apple-system, 'Helvetica Neue', sans-serif;
+    }
+
+    /* ── Phone shell ── */
+    .phone {
+      width: 390px;
+      height: 844px;
+      background: #f5f5f9;
+      border-radius: 52px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.35), 0 0 0 1.5px rgba(0,0,0,0.12), inset 0 0 0 1px rgba(255,255,255,0.15);
+    }
+
+    /* ── Screens ── */
+    .screen {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      background: #f5f5f9;
+      transform: translateX(100%);
+      transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+    .screen::-webkit-scrollbar { display: none; }
+    .screen.active { transform: translateX(0); }
+    .screen.slide-left { transform: translateX(-25%); }
+
+    /* ── Hero / header ── */
+    .hero {
+      position: relative;
+      width: 100%;
+      flex-shrink: 0;
+    }
+    .hero-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .hero-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(26,29,51,0.45) 0%, rgba(26,29,51,0.15) 50%, rgba(26,29,51,0.5) 100%);
+    }
+    .hero-body {
+      position: relative;
+      padding: 20px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+    }
+    .hero-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .hero-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.15;
+      letter-spacing: -0.3px;
+    }
+    .hero-subtitle {
+      font-size: 15px;
+      color: rgba(255,255,255,0.9);
+      margin-top: 2px;
+      font-weight: 400;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      background: #ff8d38;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+      letter-spacing: 0.1px;
+    }
+    .btn-change {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      height: 36px;
+      padding: 0 14px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      margin-top: 10px;
+      transition: background 0.15s;
+    }
+    .btn-change:active { background: rgba(255,255,255,0.28); }
+
+    .btn-close {
+      width: 32px; height: 32px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .btn-close:active { background: rgba(255,255,255,0.35); }
+    .btn-close svg { width: 16px; height: 16px; }
+
+    /* ── Progress bar ── */
+    .progress-panel {
+      background: rgba(0,0,0,0.48);
+      backdrop-filter: blur(8px);
+      border-radius: 14px;
+      padding: 8px 12px 10px;
+      margin-top: 14px;
+    }
+    .progress-caption {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.75);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 7px;
+    }
+    .progress-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+    .step-dot {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: 1.5px solid rgba(255,255,255,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: rgba(255,255,255,0.6); font-weight: 600;
+    }
+    .step-dot.done {
+      background: #5EBB6B;
+      border-color: #5EBB6B;
+    }
+    .step-dot.done::after {
+      content: '✓';
+      font-size: 11px;
+      color: #fff;
+      font-weight: 700;
+    }
+    .step-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.7);
+      font-weight: 400;
+      white-space: nowrap;
+    }
+    .step-label.active { color: #fff; font-weight: 600; }
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: rgba(255,255,255,0.25);
+      margin-bottom: 13px;
+      min-width: 12px;
+    }
+    .step-line.done { background: #5EBB6B; }
+
+    /* ── Timeline (screen 2) ── */
+    .timeline-panel {
+      background: rgba(0,0,0,0.48);
+      backdrop-filter: blur(8px);
+      border-radius: 14px;
+      padding: 6px 10px;
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .tl-step {
+      display: flex; align-items: center; gap: 6px;
+      flex-shrink: 0;
+    }
+    .tl-icon {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: rgba(255,255,255,0.7); font-weight: 700;
+    }
+    .tl-icon.person { font-size: 13px; }
+    .tl-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.85);
+      font-weight: 500;
+    }
+    .tl-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.3);
+      min-width: 8px;
+    }
+
+    /* ── Content area ── */
+    .content {
+      background: #f5f5f9;
+      padding: 0 0 32px;
+    }
+    .section {
+      background: #fff;
+      margin: 0 0 8px;
+      padding: 16px;
+    }
+    .section-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #181c2d;
+      margin-bottom: 12px;
+    }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .section-sub {
+      font-size: 13px;
+      color: #555a7a;
+      margin-bottom: 10px;
+    }
+    .link-all {
+      font-size: 13px;
+      color: #654eef;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 2px;
+    }
+
+    /* ── Confirmed badge ── */
+    .badge-confirmed {
+      display: inline-flex; align-items: center; gap: 4px;
+      align-self: flex-start;
+      background: #E8F7EA;
+      color: #2EB84B;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    /* ── Flight card ── */
+    .flight-card {
+      border: 1px solid #EBEBF0;
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: #fff;
+      flex: 1;
+    }
+    .flight-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .flight-num {
+      font-size: 15px;
+      font-weight: 700;
+      color: #181c2d;
+    }
+    .flight-booking {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 13px;
+      color: #654eef;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .flight-route {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      margin-bottom: 14px;
+    }
+    .flight-time {
+      font-size: 22px;
+      font-weight: 700;
+      color: #181c2d;
+      flex-shrink: 0;
+    }
+    .flight-duration {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 6px;
+      gap: 3px;
+    }
+    .flight-dur-text {
+      font-size: 12px;
+      color: #555a7a;
+      font-weight: 400;
+    }
+    .flight-dur-line {
+      width: 100%;
+      height: 1.5px;
+      background: #DDD;
+      position: relative;
+    }
+    .flight-dur-line::before, .flight-dur-line::after {
+      content: '';
+      position: absolute;
+      top: -3px;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #AAA;
+    }
+    .flight-dur-line::before { left: 0; }
+    .flight-dur-line::after { right: 0; }
+    .flight-places {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .flight-place {
+      font-size: 11px;
+      color: #555a7a;
+      line-height: 1.4;
+    }
+    .flight-place .date { color: #7B80A0; font-size: 11px; }
+    .flight-place .terminal { color: #181c2d; font-size: 12px; font-weight: 500; }
+    .flight-place .city { color: #654eef; font-size: 13px; font-weight: 600; }
+    .flight-place.right { text-align: right; }
+    .flight-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-top: 1px solid #F0F0F5;
+      padding-top: 10px;
+    }
+    .btn-order {
+      flex: 1;
+      height: 40px;
+      border: 1.5px solid #654eef;
+      border-radius: 12px;
+      background: transparent;
+      color: #654eef;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-order:active { background: #f0edff; }
+    .btn-download {
+      width: 40px; height: 40px;
+      border: 1.5px solid #E0E0EB;
+      border-radius: 12px;
+      background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: #555a7a;
+    }
+
+    /* ── Upsell block ── */
+    .upsell-block {
+      background: #fff;
+      padding: 16px;
+      margin-bottom: 8px;
+    }
+    .upsell-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #181c2d;
+      margin-bottom: 4px;
+    }
+    .upsell-sub {
+      font-size: 13px;
+      color: #555a7a;
+      margin-bottom: 14px;
+    }
+    .offers-scroll {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 4px;
+    }
+    .offer-card {
+      width: 100%;
+      border: 2px dashed rgba(101,78,239,0.3);
+      border-radius: 16px;
+      padding: 12px 14px;
+      cursor: pointer;
+      background: #fff;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+    }
+    .offer-card.combo {
+      border-color: #ff8d38;
+      background: linear-gradient(135deg, #fff9f5, #fff);
+    }
+    .offer-card:active { transform: scale(0.98); }
+    .offer-badge {
+      position: absolute;
+      top: -13px;
+      left: 16px;
+      background: #ff8d38;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .offer-icon-wrap {
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .offer-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .offer-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #181c2d;
+      margin-bottom: 2px;
+    }
+    .offer-price {
+      font-size: 14px;
+      font-weight: 700;
+      color: #654eef;
+      display: inline;
+    }
+    .offer-price-old {
+      font-size: 12px;
+      color: #8B8B9C;
+      text-decoration: line-through;
+      font-weight: 400;
+      margin-left: 5px;
+      display: inline;
+    }
+    .offer-add-btn {
+      width: 36px; height: 36px;
+      flex-shrink: 0;
+      background: #654eef;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    /* ── Activities section ── */
+    .activities-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .activity-card {
+      border-radius: 14px;
+      overflow: hidden;
+      height: 120px;
+      position: relative;
+      cursor: pointer;
+    }
+    .activity-card img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .activity-card .act-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.1) 60%);
+    }
+    .activity-card .act-label {
+      position: absolute;
+      bottom: 8px; left: 8px; right: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .activity-sub {
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.85;
+    }
+
+    /* ── Hotel carousel (screen 2) ── */
+    .hotel-carousel {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+    .hotel-carousel::-webkit-scrollbar { display: none; }
+    .hotel-carousel-card {
+      width: 180px;
+      flex-shrink: 0;
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #EBEBF0;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .hotel-carousel-card:active { transform: scale(0.97); }
+    .hotel-carousel-img {
+      width: 100%; height: 110px;
+      object-fit: cover;
+      display: block;
+    }
+    .hotel-carousel-body {
+      padding: 10px;
+    }
+
+    /* ── Full hotel grid (screen 4) ── */
+    .hotel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 16px;
+    }
+    .hotel-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #EBEBF0;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .hotel-card:active { transform: scale(0.97); }
+    .hotel-card-img {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+      display: block;
+    }
+    .hotel-card-body {
+      padding: 8px 10px 10px;
+    }
+    .hotel-stars {
+      display: flex;
+      align-items: center;
+      gap: 1px;
+      margin-bottom: 4px;
+    }
+    .star { color: #FFB800; font-size: 12px; }
+    .hotel-type { font-size: 10px; color: #8B8B9C; margin-left: 3px; font-weight: 400; }
+    .hotel-rating {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 4px;
+    }
+    .rating-badge {
+      background: #2EB84B;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+    .rating-count {
+      font-size: 11px;
+      color: #2EB84B;
+      font-weight: 500;
+    }
+    .hotel-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #181c2d;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    .hotel-price-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .price-old {
+      font-size: 12px;
+      color: #999;
+      text-decoration: line-through;
+    }
+    .price-new {
+      font-size: 14px;
+      font-weight: 700;
+      color: #181c2d;
+    }
+    .discount-badge {
+      background: #ff8d38;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 6px;
+    }
+
+    /* ── Chips ── */
+    .chips-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 12px 16px 10px;
+    }
+    .chips-scroll::-webkit-scrollbar { display: none; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      height: 34px;
+      padding: 0 14px;
+      border-radius: 17px;
+      background: #fff;
+      border: 1.5px solid #E0E0EB;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555a7a;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .chip.active {
+      background: #654eef;
+      border-color: #654eef;
+      color: #fff;
+    }
+    .chip:active { opacity: 0.8; }
+
+    /* ── Transport cards (screen 5) ── */
+    .transport-card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #EBEBF0;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .transport-card:active { transform: scale(0.98); box-shadow: 0 2px 12px rgba(101,78,239,0.12); }
+    .transport-icon {
+      width: 52px; height: 52px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #f0f0f8;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .transport-icon img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+    }
+    .transport-info { flex: 1; }
+    .transport-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: #181c2d;
+    }
+    .transport-time {
+      font-size: 13px;
+      color: #555a7a;
+      margin-top: 2px;
+    }
+    .transport-price {
+      font-size: 14px;
+      font-weight: 600;
+      color: #181c2d;
+      text-align: right;
+    }
+    .transport-chevron {
+      color: #C0C0D0;
+      font-size: 18px;
+    }
+    .transport-separator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0 14px;
+    }
+    .sep-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(143,148,184,0.3);
+    }
+    .sep-text {
+      font-size: 13px;
+      color: #555a7a;
+    }
+
+    /* ── Flight result cards (screen 5) ── */
+    .flight-results {
+      padding: 12px 12px 32px;
+    }
+    .flight-result {
+      background: #fff;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+      cursor: pointer;
+    }
+    .flight-result:active { transform: scale(0.99); }
+    .airline-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #f0f0f5;
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: #555a7a;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+    .fr-times {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .fr-time {
+      font-size: 26px;
+      font-weight: 700;
+      color: #181c2d;
+      letter-spacing: -0.5px;
+      min-width: 72px;
+    }
+    .fr-time.right { text-align: right; }
+    .fr-dur {
+      font-size: 13px;
+      color: #555a7a;
+      text-align: center;
+    }
+    .fr-divider {
+      height: 1px;
+      background: #EBEBF0;
+      margin: 6px 0 8px;
+    }
+    .fr-places {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: #7B80A0;
+      line-height: 1.5;
+    }
+    .fr-place-right { text-align: right; }
+    .fr-terminal { font-size: 13px; color: #181c2d; font-weight: 500; }
+    .fr-city { color: #654eef; font-weight: 600; font-size: 13px; }
+    .fr-direct { font-size: 12px; color: #555a7a; padding-top: 4px; }
+    .fr-cashback {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #2EB84B;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 8px 3px 8px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .fr-cashback-b {
+      background: #fff;
+      color: #2EB84B;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 4px;
+      padding: 1px 4px;
+      line-height: 1.4;
+    }
+    .fr-bottom {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .fr-price {
+      font-size: 22px;
+      font-weight: 700;
+      color: #181c2d;
+      letter-spacing: -0.3px;
+      line-height: 1.1;
+    }
+    .fr-price-sub {
+      font-size: 11px;
+      color: #8B8B9C;
+      margin-top: 3px;
+    }
+    .fr-select-btn {
+      background: #654eef;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 11px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .fr-select-btn:active { background: #5340d4; }
+    .btn-show-more {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: transparent;
+      border: 1.5px solid #654eef;
+      border-radius: 14px;
+      color: #654eef;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    /* ── Scroll cards row ── */
+    .scroll-cards {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      align-items: stretch;
+    }
+    .scroll-cards::-webkit-scrollbar { display: none; }
+    .order-card-wrap {
+      flex-shrink: 0;
+      width: 290px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Return ticket upsell ── */
+    .ticket-upsell {
+      border: 2px dashed rgba(101,78,239,0.35);
+      border-radius: 16px;
+      padding: 12px;
+      cursor: pointer;
+      background: #fff;
+      transition: transform 0.15s;
+      position: relative;
+      margin-top: 16px;
+    }
+    .ticket-upsell:active { transform: scale(0.98); }
+    .ticket-upsell-badge {
+      position: absolute;
+      top: -13px;
+      left: 16px;
+      background: linear-gradient(90deg, #654eef, #9A7AF5);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .ticket-upsell-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ticket-icon-wrap {
+      width: 56px; height: 56px;
+      background: #f0f0f8;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .ticket-upsell-text { flex: 1; }
+    .ticket-upsell-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #181c2d;
+      margin-bottom: 2px;
+    }
+    .ticket-upsell-price {
+      font-size: 13px;
+      color: #654eef;
+      font-weight: 600;
+    }
+    .ticket-add-btn {
+      width: 36px; height: 36px;
+      background: #654eef;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    /* ── Info hint ── */
+    .info-hint {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #EEF2FF;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+    }
+    .info-hint-icon {
+      width: 20px; height: 20px;
+      background: #654eef;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .info-hint-text {
+      font-size: 13px;
+      color: #555a7a;
+    }
+
+    /* ── Skeleton / disabled rows ── */
+    .skeleton-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid #F0F0F5;
+      opacity: 0.45;
+    }
+    .skeleton-icon {
+      width: 40px; height: 40px;
+      background: #E8E8F0;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .skeleton-lines { flex: 1; }
+    .skeleton-line {
+      height: 12px;
+      background: #E8E8F0;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+    .skeleton-line:last-child { margin-bottom: 0; width: 60%; }
+
+    /* ── Combo screen interactive states ── */
+    .hotel-carousel-card.selected {
+      border: 2px solid #654eef;
+      box-shadow: 0 0 0 3px rgba(101,78,239,0.12);
+    }
+    .hotel-carousel-card.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 22px; height: 22px;
+      background: #654eef;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .combo-flight-card {
+      background: #fff;
+      border: 1px solid #EBEBF0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      flex-shrink: 0;
+      width: 270px;
+      cursor: pointer;
+      transition: box-shadow 0.15s;
+      position: relative;
+    }
+    .combo-flight-card.selected {
+      border: 2px solid #654eef;
+      box-shadow: 0 0 0 3px rgba(101,78,239,0.12);
+    }
+    .combo-flight-card.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 22px; height: 22px;
+      background: #654eef;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .combo-flights-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+    .combo-flights-scroll::-webkit-scrollbar { display: none; }
+    .section-locked {
+      opacity: 0.45;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .section-locked.unlocked {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .tl-icon.done {
+      background: #654eef;
+      border-color: #654eef;
+      color: #fff;
+    }
+    .tl-line.done {
+      background: rgba(255,255,255,0.8);
+    }
+    .combo-pay-footer {
+      position: sticky;
+      bottom: 0;
+      background: #fff;
+      border-top: 1px solid #EBEBF0;
+      padding: 12px 16px 24px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .combo-pay-footer.visible {
+      transform: translateY(0);
+    }
+    .combo-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+    .combo-total-label { font-size: 13px; color: #555a7a; }
+    .combo-total-price { font-size: 20px; font-weight: 700; color: #181c2d; }
+    .combo-total-old { font-size: 13px; color: #8B8B9C; text-decoration: line-through; margin-left: 6px; }
+
+    /* ── Hotel card in scroll ── */
+    .hotel-order-card {
+      background: #fff;
+      border: 1px solid #EBEBF0;
+      border-radius: 16px;
+      overflow: hidden;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .hotel-order-img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .hotel-order-body {
+      padding: 10px 12px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .hotel-order-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #181c2d;
+    }
+    .hotel-order-dates {
+      font-size: 12px;
+      color: #555a7a;
+      margin-top: 2px;
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: absolute;
+      bottom: 80px;
+      left: 20px; right: 20px;
+      background: rgba(24,28,45,0.92);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 12px 16px;
+      border-radius: 14px;
+      text-align: center;
+      transform: translateY(120%);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ── Payment screen ── */
+    .pay-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 16px 8px;
+      background: #fff;
+    }
+    .pay-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #181c2d;
+    }
+    .pay-summary {
+      background: #fff;
+      margin: 8px 12px;
+      border-radius: 16px;
+      border: 1px solid #EBEBF0;
+      padding: 14px;
+    }
+    .pay-summary-label {
+      font-size: 12px;
+      color: #8B8B9C;
+      margin-bottom: 4px;
+    }
+    .pay-summary-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #181c2d;
+      margin-bottom: 2px;
+    }
+    .pay-summary-sub {
+      font-size: 13px;
+      color: #555a7a;
+    }
+    .pay-summary-price {
+      font-size: 20px;
+      font-weight: 700;
+      color: #181c2d;
+      margin-top: 10px;
+    }
+    .pay-section-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #8B8B9C;
+      padding: 12px 16px 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .pay-methods {
+      margin: 0 12px;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #EBEBF0;
+      overflow: hidden;
+    }
+    .pay-method {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #F0F0F5;
+    }
+    .pay-method:last-child { border-bottom: none; }
+    .pay-method-icon {
+      width: 40px; height: 28px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .pay-method-info { flex: 1; }
+    .pay-method-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #181c2d;
+    }
+    .pay-method-sub {
+      font-size: 12px;
+      color: #8B8B9C;
+      margin-top: 1px;
+    }
+    .pay-radio {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 2px solid #DDDDE8;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pay-radio.selected {
+      border-color: #654eef;
+      background: #654eef;
+    }
+    .pay-radio.selected::after {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .pay-footer {
+      position: sticky;
+      bottom: 0;
+      background: #fff;
+      border-top: 1px solid #EBEBF0;
+      padding: 12px 16px 24px;
+    }
+    .pay-btn {
+      width: 100%;
+      height: 52px;
+      background: #654eef;
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 17px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+    .pay-btn:active { background: #5340d4; }
+    .pay-btn.loading { background: #8E7EF5; pointer-events: none; }
+    .pay-spinner {
+      width: 20px; height: 20px;
+      border: 2.5px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    .pay-btn.loading .pay-spinner { display: block; }
+    .pay-btn.loading .pay-btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 480px) {
+      body {
+        background: #f5f5f9;
+        padding: 0;
+        align-items: stretch;
+      }
+      .phone {
+        width: 100%;
+        height: 100dvh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- ════════════════════════════════════════════
+       SCREEN 1 — Экран поездки (2 шага)
+  ════════════════════════════════════════════ -->
+  <div class="screen active" id="s1">
+
+    <!-- Hero -->
+    <div class="hero" style="height:230px">
+      <img class="hero-img" src="https://www.figma.com/api/mcp/asset/a49d8f61-3170-4ad9-8da0-d51c11c692a0"
+           alt="Санкт-Петербург" fetchpriority="high" decoding="async"
+           onerror="this.style.background='linear-gradient(135deg,#1a2a6c,#4A7FB5)'">
+      <div class="hero-gradient"></div>
+      <div class="hero-body">
+        <div>
+          <div class="hero-title">Санкт-Петербург</div>
+          <div class="hero-subtitle">13 июн, сб</div>
+        </div>
+        <div class="progress-panel">
+          <div class="progress-caption">2 шага до идеальной поездки</div>
+          <div class="progress-steps">
+            <div class="progress-step">
+              <div class="step-dot done"></div>
+              <div class="step-label active">Билет туда</div>
+            </div>
+            <div class="step-line done"></div>
+            <div class="progress-step">
+              <div class="step-dot"></div>
+              <div class="step-label">Жильё</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="progress-step">
+              <div class="step-dot"></div>
+              <div class="step-label">Билет обратно</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- My orders -->
+      <div class="section">
+        <div class="section-title">Мои заказы</div>
+        <div class="badge-confirmed">✓ Подтверждено</div>
+        <div class="flight-card">
+          <div class="flight-header">
+            <div class="flight-num">SU205</div>
+            <div class="flight-booking">Бронь: XPF69O <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></div>
+          </div>
+          <div class="flight-route">
+            <div class="flight-time">08:30</div>
+            <div class="flight-duration">
+              <div class="flight-dur-text">1ч 30м</div>
+              <div class="flight-dur-line"></div>
+            </div>
+            <div class="flight-time">10:00</div>
+          </div>
+          <div class="flight-places">
+            <div class="flight-place">
+              <div class="date">13 июн, пн</div>
+              <div class="terminal">Внуково, Терминал 1</div>
+              <div class="city">Москва</div>
+            </div>
+            <div class="flight-place right">
+              <div class="date">13 июн, пн</div>
+              <div class="terminal">Пулково, Терминал 2</div>
+              <div class="city">Санкт-Петербург</div>
+            </div>
+          </div>
+          <div class="flight-actions">
+            <button class="btn-order">Посмотреть заказ</button>
+            <button class="btn-download">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upsell -->
+      <div class="upsell-block">
+        <div class="upsell-title">2 шага до идеальной поездки</div>
+        <div class="upsell-sub">Добавьте жильё и обратный билет по самой выгодной цене</div>
+        <div class="offers-scroll">
+          <!-- Combo card -->
+          <div class="offer-card combo" onclick="goTo('s1','s2')">
+            <div class="offer-badge">Комбо −20%</div>
+            <div class="offer-icon-wrap" style="background:#fff3e8; font-size:18px; gap:2px; flex-direction:row">🏨✈️</div>
+            <div class="offer-text">
+              <div class="offer-name">Жильё и билет</div>
+              <span class="offer-price">от 6 000 ₽</span>
+              <span class="offer-price-old">от 7 500 ₽</span>
+            </div>
+            <div class="offer-add-btn">+</div>
+          </div>
+          <!-- Hotel card -->
+          <div class="offer-card" onclick="goTo('s1','s4')">
+            <div class="offer-icon-wrap" style="background:#eef2ff; font-size:30px">🏨</div>
+            <div class="offer-text">
+              <div class="offer-name">Жильё</div>
+              <span class="offer-price">от 3 000 ₽</span>
+              <span class="offer-price-old">от 3 750 ₽</span>
+            </div>
+            <div class="offer-add-btn">+</div>
+          </div>
+          <!-- Ticket card -->
+          <div class="offer-card" onclick="goTo('s1','s5')">
+            <div class="offer-icon-wrap" style="background:#f0f4ff; font-size:30px">✈️</div>
+            <div class="offer-text">
+              <div class="offer-name">Билет обратно</div>
+              <span class="offer-price">от 5 000 ₽</span>
+              <span class="offer-price-old">от 6 250 ₽</span>
+            </div>
+            <div class="offer-add-btn">+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activities -->
+      <div class="section">
+        <div class="section-title">Чем заняться в Санкт-Петербурге</div>
+        <div class="activities-grid">
+          <div class="activity-card">
+            <img src="https://www.figma.com/api/mcp/asset/84b2d861-ed64-4bcd-b860-90272f8d1a0e" alt="Бары"
+                 loading="lazy" decoding="async"
+                 onerror="this.style.display='none'; this.parentElement.style.background='#2D1B69'">
+            <div class="act-overlay"></div>
+            <div class="act-label">Бары,<br>о которых вы не слышали</div>
+          </div>
+          <div class="activity-card">
+            <img src="https://www.figma.com/api/mcp/asset/3b229081-43ea-4001-8b90-3b71fdb2fb6a" alt="Концерты"
+                 loading="lazy" decoding="async"
+                 onerror="this.style.display='none'; this.parentElement.style.background='#1a1a2e'">
+            <div class="act-overlay"></div>
+            <div class="act-label">Концерты<br><span class="activity-sub">SPB Arena</span></div>
+          </div>
+          <div class="activity-card">
+            <img src="https://www.figma.com/api/mcp/asset/481ea328-6629-4c5c-9ffc-d435d5ebcbb3" alt="Выставки"
+                 loading="lazy" decoding="async"
+                 onerror="this.style.display='none'; this.parentElement.style.background='#3D2B1F'">
+            <div class="act-overlay"></div>
+            <div class="act-label">Выставки и музеи</div>
+          </div>
+          <div class="activity-card">
+            <img src="https://www.figma.com/api/mcp/asset/0efcab0a-6c31-449f-a526-29541b012247" alt="Экскурсии"
+                 loading="lazy" decoding="async"
+                 onerror="this.style.display='none'; this.parentElement.style.background='#1B3A5C'">
+            <div class="act-overlay"></div>
+            <div class="act-label">Экскурсии по городу</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+    <div class="toast" id="toast1"></div>
+  </div><!-- /s1 -->
+
+
+  <!-- ════════════════════════════════════════════
+       SCREEN 2 — Выбор комбо
+  ════════════════════════════════════════════ -->
+  <div class="screen" id="s2">
+
+    <div class="hero" style="height:248px">
+      <img class="hero-img" src="https://www.figma.com/api/mcp/asset/e07442fb-1208-4361-a34d-ef71ce47f16c"
+           alt="Санкт-Петербург" onerror="this.style.background='linear-gradient(135deg,#1a2a6c,#4A7FB5)'">
+      <div class="hero-gradient"></div>
+      <div class="hero-body">
+        <div>
+          <div class="hero-badge">Комбо −20%</div>
+          <div class="hero-top">
+            <div>
+              <div class="hero-title">Санкт-Петербург</div>
+              <div class="hero-subtitle">13 июн, сб − 17 июн, пт &nbsp; 1 гость</div>
+            </div>
+            <div class="btn-close" onclick="goBack('s2')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </div>
+          </div>
+          <div class="btn-change">Изменить</div>
+        </div>
+        <div class="timeline-panel">
+          <div class="tl-step">
+            <div class="tl-icon" id="s2-tl1">1</div>
+            <div class="tl-label">Жильё</div>
+          </div>
+          <div class="tl-line" id="s2-tl-line1"></div>
+          <div class="tl-step">
+            <div class="tl-icon" id="s2-tl2">2</div>
+            <div class="tl-label">Билет обратно</div>
+          </div>
+          <div class="tl-line" id="s2-tl-line2"></div>
+          <div class="tl-step">
+            <div class="tl-icon" id="s2-tl3">3</div>
+            <div class="tl-label">Оплата</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Hotels section -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title" style="margin-bottom:0">Где остановитесь</div>
+          <div class="link-all">Все →</div>
+        </div>
+        <div class="section-sub">Сначала рекомендованные</div>
+        <div class="hotel-carousel">
+          <div class="hotel-carousel-card" onclick="selectComboHotel(this, 'Отель Hilton Ленинградская', '13 657 ₽', 'https://www.figma.com/api/mcp/asset/09d8a2d1-25b3-4d90-a87c-75e1bc7c6e28')">
+            <img class="hotel-carousel-img"
+                 src="https://www.figma.com/api/mcp/asset/09d8a2d1-25b3-4d90-a87c-75e1bc7c6e28"
+                 alt="Hilton" onerror="this.style.background='#3A5A8A'">
+            <div class="hotel-carousel-body">
+              <div class="hotel-stars">
+                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                <span class="hotel-type">Отель</span>
+              </div>
+              <div class="hotel-rating">
+                <span class="rating-badge">9.2</span>
+                <span class="rating-count">2 093 отзыва</span>
+              </div>
+              <div class="hotel-name">Отель Hilton Ленинградская</div>
+              <div class="hotel-price-row">
+                <span class="price-old">15 000 ₽</span>
+                <span class="price-new">13 657 ₽</span>
+                <span class="discount-badge">−10%</span>
+              </div>
+            </div>
+          </div>
+          <div class="hotel-carousel-card" onclick="selectComboHotel(this, 'Отель Веллион Центральный', '6 390 ₽', 'https://www.figma.com/api/mcp/asset/b0d1872a-160c-47db-acde-efafac2592ac')">
+            <img class="hotel-carousel-img"
+                 src="https://www.figma.com/api/mcp/asset/b0d1872a-160c-47db-acde-efafac2592ac"
+                 alt="Веллион" onerror="this.style.background='#7A9A7A'">
+            <div class="hotel-carousel-body">
+              <div class="hotel-stars">
+                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                <span class="hotel-type">Отель</span>
+              </div>
+              <div class="hotel-rating">
+                <span class="rating-badge" style="background:#4CAF50">8.7</span>
+                <span class="rating-count">122 отзыва</span>
+              </div>
+              <div class="hotel-name">Отель Веллион Центральный</div>
+              <div class="hotel-price-row">
+                <span class="price-new">6 390 ₽</span>
+              </div>
+            </div>
+          </div>
+          <div class="hotel-carousel-card" onclick="selectComboHotel(this, 'Отель на Рубенштейна', '13 657 ₽', 'https://www.figma.com/api/mcp/asset/b7fceba6-eac9-47eb-8e51-cda67b64c924')">
+            <img class="hotel-carousel-img"
+                 src="https://www.figma.com/api/mcp/asset/b7fceba6-eac9-47eb-8e51-cda67b64c924"
+                 alt="Рубенштейна" onerror="this.style.background='#5A6A8A'">
+            <div class="hotel-carousel-body">
+              <div class="hotel-stars">
+                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                <span class="hotel-type">Отель</span>
+              </div>
+              <div class="hotel-rating">
+                <span class="rating-badge">9.2</span>
+                <span class="rating-count">2 093 отзыва</span>
+              </div>
+              <div class="hotel-name">Отель на Рубенштейна</div>
+              <div class="hotel-price-row">
+                <span class="price-old">15 000 ₽</span>
+                <span class="price-new">13 657 ₽</span>
+                <span class="discount-badge">−10%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Return ticket section (locked until hotel chosen) -->
+      <div class="section section-locked" id="s2-ticket-section">
+        <div class="section-title">Билет обратно</div>
+        <div class="info-hint" id="s2-ticket-hint">
+          <div class="info-hint-icon">i</div>
+          <div class="info-hint-text">Можно будет выбрать после жилья</div>
+        </div>
+        <div class="combo-flights-scroll" id="s2-flights-scroll" style="display:none">
+          <div class="combo-flight-card" onclick="selectComboFlight(this, 'Аэрофлот SU206', '6 856 ₽')">
+            <div class="airline-chip" style="margin-bottom:8px">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+              Аэрофлот
+            </div>
+            <div class="fr-times" style="margin-bottom:4px">
+              <div class="fr-time" style="font-size:20px">08:30</div>
+              <div class="fr-dur">1ч 35м</div>
+              <div class="fr-time right" style="font-size:20px">10:05</div>
+            </div>
+            <div class="fr-divider"></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:#555a7a;margin-bottom:8px">
+              <div><div style="color:#181c2d;font-weight:600">Пулково</div><div>Санкт-Петербург</div></div>
+              <div style="text-align:right"><div style="color:#181c2d;font-weight:600">Внуково</div><div>Москва</div></div>
+            </div>
+            <div style="font-size:16px;font-weight:700;color:#181c2d">6 856 ₽</div>
+          </div>
+          <div class="combo-flight-card" onclick="selectComboFlight(this, 'S7 Airlines', '5 200 ₽')">
+            <div class="airline-chip" style="margin-bottom:8px">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+              S7 Airlines
+            </div>
+            <div class="fr-times" style="margin-bottom:4px">
+              <div class="fr-time" style="font-size:20px">11:30</div>
+              <div class="fr-dur">1ч 35м</div>
+              <div class="fr-time right" style="font-size:20px">13:05</div>
+            </div>
+            <div class="fr-divider"></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:#555a7a;margin-bottom:8px">
+              <div><div style="color:#181c2d;font-weight:600">Пулково</div><div>Санкт-Петербург</div></div>
+              <div style="text-align:right"><div style="color:#181c2d;font-weight:600">Домодедово</div><div>Москва</div></div>
+            </div>
+            <div style="font-size:16px;font-weight:700;color:#181c2d">5 200 ₽</div>
+          </div>
+          <div class="combo-flight-card" onclick="selectComboFlight(this, 'Уральские авиалинии', '4 980 ₽')">
+            <div class="airline-chip" style="margin-bottom:8px">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+              Уральские авиалинии
+            </div>
+            <div class="fr-times" style="margin-bottom:4px">
+              <div class="fr-time" style="font-size:20px">15:45</div>
+              <div class="fr-dur">1ч 35м</div>
+              <div class="fr-time right" style="font-size:20px">17:20</div>
+            </div>
+            <div class="fr-divider"></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:#555a7a;margin-bottom:8px">
+              <div><div style="color:#181c2d;font-weight:600">Пулково</div><div>Санкт-Петербург</div></div>
+              <div style="text-align:right"><div style="color:#181c2d;font-weight:600">Шереметьево</div><div>Москва</div></div>
+            </div>
+            <div style="font-size:16px;font-weight:700;color:#181c2d">4 980 ₽</div>
+          </div>
+        </div>
+        <div class="skeleton-row" id="s2-skel1">
+          <div class="skeleton-icon"></div>
+          <div class="skeleton-lines"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+        </div>
+        <div class="skeleton-row" id="s2-skel2">
+          <div class="skeleton-icon"></div>
+          <div class="skeleton-lines"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Pay footer (appears when both selected) -->
+    <div class="combo-pay-footer" id="s2-pay-footer">
+      <div class="combo-total-row">
+        <span class="combo-total-label">Итого со скидкой −20%</span>
+        <div>
+          <span class="combo-total-price" id="s2-total-price">—</span>
+          <span class="combo-total-old" id="s2-total-old"></span>
+        </div>
+      </div>
+      <button class="pay-btn" onclick="comboGoToPay()">
+        <span class="pay-btn-text">Перейти к оплате</span>
+      </button>
+    </div>
+
+  </div><!-- /s2 -->
+
+
+  <!-- ════════════════════════════════════════════
+       SCREEN 3 — Экран поездки + отель (1 шаг)
+  ════════════════════════════════════════════ -->
+  <div class="screen" id="s3">
+
+    <div class="hero" style="height:230px">
+      <img class="hero-img" src="https://www.figma.com/api/mcp/asset/0a2423c0-8dbd-4311-9db8-0e732d4e6b79"
+           alt="Санкт-Петербург" onerror="this.style.background='linear-gradient(135deg,#1a2a6c,#4A7FB5)'">
+      <div class="hero-gradient"></div>
+      <div class="hero-body">
+        <div>
+          <div class="hero-title">Санкт-Петербург</div>
+          <div class="hero-subtitle">13 июн, сб − 17 июн, пт</div>
+        </div>
+        <div class="progress-panel">
+          <div class="progress-caption">1 шаг до идеальной поездки</div>
+          <div class="progress-steps">
+            <div class="progress-step">
+              <div class="step-dot done"></div>
+              <div class="step-label active">Билет туда</div>
+            </div>
+            <div class="step-line done"></div>
+            <div class="progress-step">
+              <div class="step-dot done"></div>
+              <div class="step-label active">Жильё</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="progress-step">
+              <div class="step-dot"></div>
+              <div class="step-label">Билет обратно</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- My orders (horizontal scroll with 2 cards) -->
+      <div class="section">
+        <div class="section-title">Мои заказы</div>
+        <div class="scroll-cards">
+          <!-- Flight card -->
+          <div class="order-card-wrap">
+            <div class="badge-confirmed">✓ Подтверждено</div>
+            <div class="flight-card">
+              <div class="flight-header">
+                <div class="flight-num">SU205</div>
+                <div class="flight-booking">Бронь: XPF69O
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </div>
+              </div>
+              <div class="flight-route">
+                <div class="flight-time">08:30</div>
+                <div class="flight-duration">
+                  <div class="flight-dur-text">1ч 35м</div>
+                  <div class="flight-dur-line"></div>
+                </div>
+                <div class="flight-time">10:00</div>
+              </div>
+              <div class="flight-places">
+                <div class="flight-place">
+                  <div class="date">13 июн, сб</div>
+                  <div class="terminal">Внуково, Терминал 1</div>
+                  <div class="city">Москва</div>
+                </div>
+                <div class="flight-place right">
+                  <div class="date">13 июн, сб</div>
+                  <div class="terminal">Пулково, Терминал 2</div>
+                  <div class="city">Санкт-Петербург</div>
+                </div>
+              </div>
+              <div class="flight-actions">
+                <button class="btn-order">Посмотреть заказ</button>
+                <button class="btn-download">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hotel card -->
+          <div class="order-card-wrap">
+            <div class="badge-confirmed">✓ Подтверждено</div>
+            <div class="hotel-order-card">
+              <img class="hotel-order-img"
+                   src="https://www.figma.com/api/mcp/asset/09d8a2d1-25b3-4d90-a87c-75e1bc7c6e28"
+                   alt="Hilton" onerror="this.style.background='#3A5A8A'">
+              <div class="hotel-order-body">
+                <div class="hotel-order-name" id="s3-hotel-name">Отель Hilton Ленинградская</div>
+                <div class="hotel-order-dates">13 − 17 июн, 4 ночи</div>
+                <div class="flight-actions" style="margin-top:auto">
+                  <button class="btn-order">Посмотреть заказ</button>
+                  <button class="btn-download">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Return ticket upsell -->
+      <div class="upsell-block">
+        <div class="upsell-title">1 шаг до идеальной поездки</div>
+        <div class="upsell-sub">Осталось добавить только обратный билет</div>
+        <div class="ticket-upsell" onclick="goTo('s3','s5')">
+          <div class="ticket-upsell-badge">−30% только сегодня</div>
+          <div class="ticket-upsell-inner">
+            <div class="ticket-icon-wrap">✈️</div>
+            <div class="ticket-upsell-text">
+              <div class="ticket-upsell-name">Билет обратно</div>
+              <div class="ticket-upsell-price">от 5 000 ₽</div>
+              <div style="font-size:11px;color:#8B8B9C;text-decoration:line-through;font-weight:400;margin-top:1px">от 6 250 ₽</div>
+            </div>
+            <div class="ticket-add-btn">+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activities -->
+      <div class="section">
+        <div class="section-title">Чем заняться в Санкт-Петербурге</div>
+        <div class="activities-grid">
+          <div class="activity-card">
+            <img src="https://www.figma.com/api/mcp/asset/84b2d861-ed64-4bcd-b860-90272f8d1a0e" alt="Бары"
+                 onerror="this.style.display='none'; this.parentElement.style.background='#2D1B69'">
+            <div class="act-overlay"></div>
+            <div class="act-label">Бары,<br>о которых вы не слышали</div>
+          </div>
+          <div class="activity-card">
+            <img src="https://www.figma.com/api/mcp/asset/3b229081-43ea-4001-8b90-3b71fdb2fb6a" alt="Концерты"
+                 onerror="this.style.display='none'; this.parentElement.style.background='#1a1a2e'">
+            <div class="act-overlay"></div>
+            <div class="act-label">Концерты<br><span class="activity-sub">SPB Arena</span></div>
+          </div>
+          <div class="activity-card">
+            <img src="https://www.figma.com/api/mcp/asset/481ea328-6629-4c5c-9ffc-d435d5ebcbb3" alt="Выставки"
+                 onerror="this.style.display='none'; this.parentElement.style.background='#3D2B1F'">
+            <div class="act-overlay"></div>
+            <div class="act-label">Выставки и музеи</div>
+          </div>
+          <div class="activity-card">
+            <img src="https://www.figma.com/api/mcp/asset/0efcab0a-6c31-449f-a526-29541b012247" alt="Экскурсии"
+                 onerror="this.style.display='none'; this.parentElement.style.background='#1B3A5C'">
+            <div class="act-overlay"></div>
+            <div class="act-label">Экскурсии по городу</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /s3 -->
+
+
+  <!-- ════════════════════════════════════════════
+       SCREEN 4 — Выбор отеля
+  ════════════════════════════════════════════ -->
+  <div class="screen" id="s4">
+
+    <div class="hero" style="height:200px">
+      <img class="hero-img" src="https://www.figma.com/api/mcp/asset/b40eabe1-ec17-4382-bd74-1ad581b9a10f"
+           alt="Жильё" onerror="this.style.background='linear-gradient(135deg,#4A6A8A,#8A9ABF)'">
+      <div class="hero-gradient"></div>
+      <div class="hero-body" style="padding-bottom:20px">
+        <div class="hero-top">
+          <div>
+            <div class="hero-title">Жильё<br>в Санкт-Петербурге</div>
+            <div class="hero-subtitle">13 июн, сб − 17 июн, вт &nbsp; 1 гость</div>
+          </div>
+          <div class="btn-close" onclick="goBack('s4')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </div>
+        </div>
+        <div class="btn-change" style="margin-top:8px">Изменить</div>
+      </div>
+    </div>
+
+    <!-- Chips -->
+    <div class="chips-scroll" style="background:#f5f5f9">
+      <div class="chip active" onclick="selectChip(this)">В центре</div>
+      <div class="chip" onclick="selectChip(this)">Для тусовки</div>
+      <div class="chip" onclick="selectChip(this)">Тихий отдых</div>
+      <div class="chip" onclick="selectChip(this)">Высокий рейтинг</div>
+      <div class="chip" onclick="selectChip(this)">Завтрак включён</div>
+    </div>
+
+    <!-- Hotel grid -->
+    <div class="hotel-grid">
+
+      <div class="hotel-card" onclick="selectHotel('Отель Hilton Ленинградская', '13 657 ₽',
+        'https://www.figma.com/api/mcp/asset/09d8a2d1-25b3-4d90-a87c-75e1bc7c6e28')">
+        <img class="hotel-card-img"
+             src="https://www.figma.com/api/mcp/asset/09d8a2d1-25b3-4d90-a87c-75e1bc7c6e28"
+             alt="Hilton" onerror="this.style.background='#3A5A8A'">
+        <div class="hotel-card-body">
+          <div class="hotel-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="hotel-type">Отель</span></div>
+          <div class="hotel-rating"><span class="rating-badge">9.2</span><span class="rating-count">2 093 отзыва</span></div>
+          <div class="hotel-name">Отель Hilton Ленинградская</div>
+          <div class="hotel-price-row">
+            <span class="price-old">15 000 ₽</span>
+            <span class="price-new">13 657 ₽</span>
+            <span class="discount-badge">−10%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hotel-card" onclick="selectHotel('Отель Веллион Центральный', '6 390 ₽',
+        'https://www.figma.com/api/mcp/asset/b0d1872a-160c-47db-acde-efafac2592ac')">
+        <img class="hotel-card-img"
+             src="https://www.figma.com/api/mcp/asset/b0d1872a-160c-47db-acde-efafac2592ac"
+             alt="Веллион" onerror="this.style.background='#7A9A7A'">
+        <div class="hotel-card-body">
+          <div class="hotel-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="hotel-type">Отель</span></div>
+          <div class="hotel-rating"><span class="rating-badge" style="background:#4CAF50">8.7</span><span class="rating-count">122 отзыва</span></div>
+          <div class="hotel-name">Отель Веллион Центральный</div>
+          <div class="hotel-price-row"><span class="price-new">6 390 ₽</span></div>
+        </div>
+      </div>
+
+      <div class="hotel-card" onclick="selectHotel('Отель на Рубенштейна', '13 657 ₽',
+        'https://www.figma.com/api/mcp/asset/b7fceba6-eac9-47eb-8e51-cda67b64c924')">
+        <img class="hotel-card-img"
+             src="https://www.figma.com/api/mcp/asset/b7fceba6-eac9-47eb-8e51-cda67b64c924"
+             alt="Рубенштейна" onerror="this.style.background='#5A6A8A'">
+        <div class="hotel-card-body">
+          <div class="hotel-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="hotel-type">Отель</span></div>
+          <div class="hotel-rating"><span class="rating-badge">9.2</span><span class="rating-count">2 093 отзыва</span></div>
+          <div class="hotel-name">Отель на Рубенштейна</div>
+          <div class="hotel-price-row">
+            <span class="price-old">15 000 ₽</span>
+            <span class="price-new">13 657 ₽</span>
+            <span class="discount-badge">−10%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hotel-card" onclick="selectHotel('Отель Бархатные сезоны', '6 390 ₽',
+        'https://www.figma.com/api/mcp/asset/a3f0bc46-5f68-446e-bb83-1a4febcb2005')">
+        <img class="hotel-card-img"
+             src="https://www.figma.com/api/mcp/asset/a3f0bc46-5f68-446e-bb83-1a4febcb2005"
+             alt="Бархатные сезоны" onerror="this.style.background='#8A7A5A'">
+        <div class="hotel-card-body">
+          <div class="hotel-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="hotel-type">Отель</span></div>
+          <div class="hotel-rating"><span class="rating-badge" style="background:#4CAF50">8.7</span><span class="rating-count">122 отзыва</span></div>
+          <div class="hotel-name">Отель Бархатные сезоны</div>
+          <div class="hotel-price-row"><span class="price-new">6 390 ₽</span></div>
+        </div>
+      </div>
+
+      <div class="hotel-card" onclick="selectHotel('Отель Hilton Ленинград', '13 657 ₽',
+        'https://www.figma.com/api/mcp/asset/8e6b9a59-be9c-4a4b-8bb7-d54888ed4af4')">
+        <img class="hotel-card-img"
+             src="https://www.figma.com/api/mcp/asset/8e6b9a59-be9c-4a4b-8bb7-d54888ed4af4"
+             alt="Hilton Ленинград" onerror="this.style.background='#2A4A7A'">
+        <div class="hotel-card-body">
+          <div class="hotel-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="hotel-type">Отель</span></div>
+          <div class="hotel-rating"><span class="rating-badge">9.2</span><span class="rating-count">2 093 отзыва</span></div>
+          <div class="hotel-name">Отель Hilton Ленинград</div>
+          <div class="hotel-price-row">
+            <span class="price-old">15 000 ₽</span>
+            <span class="price-new">13 657 ₽</span>
+            <span class="discount-badge">−10%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hotel-card" onclick="selectHotel('Отель Веллион Павелецкая', '6 390 ₽',
+        'https://www.figma.com/api/mcp/asset/85d9fd05-aaeb-4700-a128-bbe36747c45b')">
+        <img class="hotel-card-img"
+             src="https://www.figma.com/api/mcp/asset/85d9fd05-aaeb-4700-a128-bbe36747c45b"
+             alt="Веллион Павелецкая" onerror="this.style.background='#6A7A8A'">
+        <div class="hotel-card-body">
+          <div class="hotel-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="hotel-type">Отель</span></div>
+          <div class="hotel-rating"><span class="rating-badge" style="background:#4CAF50">8.7</span><span class="rating-count">122 отзыва</span></div>
+          <div class="hotel-name">Отель Веллион Павелецкая</div>
+          <div class="hotel-price-row"><span class="price-new">6 390 ₽</span></div>
+        </div>
+      </div>
+
+    </div>
+    <div style="padding:4px 12px 32px">
+      <button class="btn-show-more">Показать ещё отели</button>
+    </div>
+  </div><!-- /s4 -->
+
+
+  <!-- ════════════════════════════════════════════
+       SCREEN 5 — Выбор обратного билета
+  ════════════════════════════════════════════ -->
+  <div class="screen" id="s5">
+
+    <div class="hero" style="height:200px">
+      <img class="hero-img" src="https://www.figma.com/api/mcp/asset/9de7e2ec-6caf-4aa9-83b9-fc675531cd1e"
+           alt="Москва" onerror="this.style.background='linear-gradient(135deg,#2C1654,#5A2A8A)'">
+      <div class="hero-gradient"></div>
+      <div class="hero-body" style="padding-bottom:20px">
+        <div class="hero-top">
+          <div>
+            <div class="hero-title">Обратный билет<br>в Москву</div>
+            <div class="hero-subtitle">17 июн, вт &nbsp; 1 пассажир</div>
+          </div>
+          <div class="btn-close" onclick="goBack('s5')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </div>
+        </div>
+        <div class="btn-change" style="margin-top:8px">Изменить</div>
+      </div>
+    </div>
+
+    <div class="flight-results">
+
+      <!-- Flight 1 -->
+      <div class="flight-result" onclick="selectTransport('Самолёт')">
+        <div class="airline-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+          Аэрофлот
+        </div>
+        <div class="fr-times">
+          <div class="fr-time">08:30</div>
+          <div class="fr-dur">1ч 35м</div>
+          <div class="fr-time right">10:05</div>
+        </div>
+        <div class="fr-divider"></div>
+        <div class="fr-places">
+          <div>
+            <div>17 июн, вт</div>
+            <div class="fr-terminal">Пулково</div>
+            <div class="fr-city">Санкт-Петербург</div>
+          </div>
+          <div class="fr-direct">Прямой</div>
+          <div class="fr-place-right">
+            <div>17 июн, вт</div>
+            <div class="fr-terminal">Внуково</div>
+            <div class="fr-city">Москва</div>
+          </div>
+        </div>
+        <div class="fr-cashback">Кешбэк 159 <span class="fr-cashback-b">Б</span></div>
+        <div class="fr-bottom">
+          <div>
+            <div class="fr-price">6 856 ₽</div>
+            <div class="fr-price-sub">без багажа, за одного</div>
+          </div>
+          <button class="fr-select-btn">Выбрать билет</button>
+        </div>
+      </div>
+
+      <!-- Flight 2 -->
+      <div class="flight-result" onclick="selectTransport('Самолёт')">
+        <div class="airline-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+          S7 Airlines
+        </div>
+        <div class="fr-times">
+          <div class="fr-time">11:30</div>
+          <div class="fr-dur">1ч 35м</div>
+          <div class="fr-time right">13:05</div>
+        </div>
+        <div class="fr-divider"></div>
+        <div class="fr-places">
+          <div>
+            <div>17 июн, вт</div>
+            <div class="fr-terminal">Пулково</div>
+            <div class="fr-city">Санкт-Петербург</div>
+          </div>
+          <div class="fr-direct">Прямой</div>
+          <div class="fr-place-right">
+            <div>17 июн, вт</div>
+            <div class="fr-terminal">Домодедово</div>
+            <div class="fr-city">Москва</div>
+          </div>
+        </div>
+        <div class="fr-cashback">Кешбэк 104 <span class="fr-cashback-b">Б</span></div>
+        <div class="fr-bottom">
+          <div>
+            <div class="fr-price">5 200 ₽</div>
+            <div class="fr-price-sub">без багажа, за одного</div>
+          </div>
+          <button class="fr-select-btn">Выбрать билет</button>
+        </div>
+      </div>
+
+      <!-- Flight 3 -->
+      <div class="flight-result" onclick="selectTransport('Самолёт')">
+        <div class="airline-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+          Уральские авиалинии
+        </div>
+        <div class="fr-times">
+          <div class="fr-time">15:45</div>
+          <div class="fr-dur">1ч 35м</div>
+          <div class="fr-time right">17:20</div>
+        </div>
+        <div class="fr-divider"></div>
+        <div class="fr-places">
+          <div>
+            <div>17 июн, вт</div>
+            <div class="fr-terminal">Пулково</div>
+            <div class="fr-city">Санкт-Петербург</div>
+          </div>
+          <div class="fr-direct">Прямой</div>
+          <div class="fr-place-right">
+            <div>17 июн, вт</div>
+            <div class="fr-terminal">Шереметьево</div>
+            <div class="fr-city">Москва</div>
+          </div>
+        </div>
+        <div class="fr-cashback">Кешбэк 99 <span class="fr-cashback-b">Б</span></div>
+        <div class="fr-bottom">
+          <div>
+            <div class="fr-price">4 980 ₽</div>
+            <div class="fr-price-sub">без багажа, за одного</div>
+          </div>
+          <button class="fr-select-btn">Выбрать билет</button>
+        </div>
+      </div>
+
+      <button class="btn-show-more">Показать ещё рейсы</button>
+
+    </div>
+
+    <div class="toast" id="toast5"></div>
+  </div><!-- /s5 -->
+
+
+  <!-- ════════════════════════════════════════════
+       SCREEN 6 — Всё оформлено! (финал)
+  ════════════════════════════════════════════ -->
+  <div class="screen" id="s6">
+
+    <div class="hero" style="height:230px">
+      <img class="hero-img" src="https://www.figma.com/api/mcp/asset/0a2423c0-8dbd-4311-9db8-0e732d4e6b79"
+           alt="Санкт-Петербург" onerror="this.style.background='linear-gradient(135deg,#1a2a6c,#4A7FB5)'">
+      <div class="hero-gradient"></div>
+      <div class="hero-body">
+        <div>
+          <div class="hero-title">Санкт-Петербург</div>
+          <div class="hero-subtitle">13 июн, сб − 17 июн, пт</div>
+        </div>
+        <div class="progress-panel">
+          <div class="progress-caption">Поездка оформлена!</div>
+          <div class="progress-steps">
+            <div class="progress-step">
+              <div class="step-dot done"></div>
+              <div class="step-label active">Билет туда</div>
+            </div>
+            <div class="step-line done"></div>
+            <div class="progress-step">
+              <div class="step-dot done"></div>
+              <div class="step-label active">Жильё</div>
+            </div>
+            <div class="step-line done"></div>
+            <div class="progress-step">
+              <div class="step-dot done"></div>
+              <div class="step-label active">Билет обратно</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section">
+        <div style="text-align:center;padding:20px 0 8px">
+          <div style="font-size:52px;margin-bottom:12px">🎉</div>
+          <div style="font-size:21px;font-weight:700;color:#181c2d;margin-bottom:8px">Отличный выбор!</div>
+          <div style="font-size:15px;color:#555a7a;line-height:1.5">Все составляющие поездки<br>успешно оформлены</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Мои заказы</div>
+        <div class="scroll-cards">
+
+          <!-- Flight there -->
+          <div class="order-card-wrap">
+            <div class="badge-confirmed">✓ Подтверждено</div>
+            <div class="flight-card">
+              <div class="flight-header">
+                <div class="flight-num">SU205</div>
+                <div class="flight-booking">Бронь: XPF69O
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </div>
+              </div>
+              <div class="flight-route">
+                <div class="flight-time">08:30</div>
+                <div class="flight-duration">
+                  <div class="flight-dur-text">1ч 35м</div>
+                  <div class="flight-dur-line"></div>
+                </div>
+                <div class="flight-time">10:05</div>
+              </div>
+              <div class="flight-places">
+                <div class="flight-place">
+                  <div class="date">13 июн, сб</div>
+                  <div class="terminal">Внуково, Терминал 1</div>
+                  <div class="city">Москва</div>
+                </div>
+                <div class="flight-place right">
+                  <div class="date">13 июн, сб</div>
+                  <div class="terminal">Пулково, Терминал 2</div>
+                  <div class="city">Санкт-Петербург</div>
+                </div>
+              </div>
+              <div class="flight-actions">
+                <button class="btn-order">Посмотреть заказ</button>
+                <button class="btn-download">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hotel -->
+          <div class="order-card-wrap">
+            <div class="badge-confirmed">✓ Подтверждено</div>
+            <div class="hotel-order-card">
+              <img class="hotel-order-img"
+                   id="s6-hotel-img"
+                   src="https://www.figma.com/api/mcp/asset/09d8a2d1-25b3-4d90-a87c-75e1bc7c6e28"
+                   alt="Отель" onerror="this.style.background='#3A5A8A'">
+              <div class="hotel-order-body">
+                <div class="hotel-order-name" id="s6-hotel-name">Отель Hilton Ленинградская</div>
+                <div class="hotel-order-dates">13 − 17 июн, 4 ночи</div>
+                <div class="flight-actions" style="margin-top:auto">
+                  <button class="btn-order">Посмотреть заказ</button>
+                  <button class="btn-download">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Flight back -->
+          <div class="order-card-wrap">
+            <div class="badge-confirmed">✓ Подтверждено</div>
+            <div class="flight-card">
+              <div class="flight-header">
+                <div class="flight-num" id="s6-transport">SU206</div>
+                <div class="flight-booking">Бронь: KYR42P
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </div>
+              </div>
+              <div class="flight-route">
+                <div class="flight-time">10:05</div>
+                <div class="flight-duration">
+                  <div class="flight-dur-text">1ч 35м</div>
+                  <div class="flight-dur-line"></div>
+                </div>
+                <div class="flight-time">11:40</div>
+              </div>
+              <div class="flight-places">
+                <div class="flight-place">
+                  <div class="date">17 июн, вт</div>
+                  <div class="terminal">Пулково, Терминал 2</div>
+                  <div class="city">Санкт-Петербург</div>
+                </div>
+                <div class="flight-place right">
+                  <div class="date">17 июн, вт</div>
+                  <div class="terminal">Внуково, Терминал 1</div>
+                  <div class="city">Москва</div>
+                </div>
+              </div>
+              <div class="flight-actions">
+                <button class="btn-order">Посмотреть заказ</button>
+                <button class="btn-download">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Activities -->
+      <div class="section">
+        <div class="section-title">Чем заняться в Санкт-Петербурге</div>
+        <div class="activities-grid">
+          <div class="activity-card">
+            <img src="https://www.figma.com/api/mcp/asset/84b2d861-ed64-4bcd-b860-90272f8d1a0e" alt="Бары"
+                 onerror="this.style.display='none'; this.parentElement.style.background='#2D1B69'">
+            <div class="act-overlay"></div>
+            <div class="act-label">Бары,<br>о которых вы не слышали</div>
+          </div>
+          <div class="activity-card">
+            <img src="https://www.figma.com/api/mcp/asset/3b229081-43ea-4001-8b90-3b71fdb2fb6a" alt="Концерты"
+                 onerror="this.style.display='none'; this.parentElement.style.background='#1a1a2e'">
+            <div class="act-overlay"></div>
+            <div class="act-label">Концерты<br><span class="activity-sub">SPB Arena</span></div>
+          </div>
+          <div class="activity-card">
+            <img src="https://www.figma.com/api/mcp/asset/481ea328-6629-4c5c-9ffc-d435d5ebcbb3" alt="Выставки"
+                 onerror="this.style.display='none'; this.parentElement.style.background='#3D2B1F'">
+            <div class="act-overlay"></div>
+            <div class="act-label">Выставки и музеи</div>
+          </div>
+          <div class="activity-card">
+            <img src="https://www.figma.com/api/mcp/asset/0efcab0a-6c31-449f-a526-29541b012247" alt="Экскурсии"
+                 onerror="this.style.display='none'; this.parentElement.style.background='#1B3A5C'">
+            <div class="act-overlay"></div>
+            <div class="act-label">Экскурсии по городу</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /s6 -->
+
+
+  <!-- ════════════════════════════════════════════
+       SCREEN PAY — Оплата
+  ════════════════════════════════════════════ -->
+  <div class="screen" id="spay" style="background:#f5f5f9">
+
+    <div class="pay-topbar">
+      <div class="btn-close" style="background:#f0f0f5" onclick="goBack('spay')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#181c2d" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+      <div class="pay-title">Оплата</div>
+      <div style="width:32px"></div>
+    </div>
+
+    <div class="pay-summary">
+      <div class="pay-summary-label">Ваш заказ</div>
+      <div class="pay-summary-name" id="pay-name">—</div>
+      <div class="pay-summary-sub" id="pay-sub">—</div>
+      <div class="pay-summary-price" id="pay-price">—</div>
+    </div>
+
+    <div class="pay-section-label">Способ оплаты</div>
+    <div class="pay-methods">
+      <div class="pay-method" onclick="selectPayMethod(this)">
+        <div class="pay-method-icon" style="background:#f0edff">💳</div>
+        <div class="pay-method-info">
+          <div class="pay-method-name">Visa •••• 4812</div>
+          <div class="pay-method-sub">Кредитная карта</div>
+        </div>
+        <div class="pay-radio selected"></div>
+      </div>
+      <div class="pay-method" onclick="selectPayMethod(this)">
+        <div class="pay-method-icon" style="background:#fff0e8">📱</div>
+        <div class="pay-method-info">
+          <div class="pay-method-name">SberPay</div>
+          <div class="pay-method-sub">Сбербанк</div>
+        </div>
+        <div class="pay-radio"></div>
+      </div>
+      <div class="pay-method" onclick="selectPayMethod(this)">
+        <div class="pay-method-icon" style="background:#eef7ff">🏦</div>
+        <div class="pay-method-info">
+          <div class="pay-method-name">Mir Pay</div>
+          <div class="pay-method-sub">Национальная платёжная система</div>
+        </div>
+        <div class="pay-radio"></div>
+      </div>
+    </div>
+
+    <div class="pay-footer">
+      <button class="pay-btn" id="pay-btn" onclick="confirmPayment()">
+        <div class="pay-spinner"></div>
+        <span class="pay-btn-text" id="pay-btn-text">Оплатить —</span>
+      </button>
+    </div>
+
+  </div><!-- /spay -->
+
+
+</div><!-- /phone -->
+
+
+<script>
+  // ── Navigation state ──
+  const history = [];
+  let currentScreen = 's1';
+
+  // ── Lazy image loading ──
+  function loadScreenImages(screenEl) {
+    screenEl.querySelectorAll('img[data-src]').forEach(function(img) {
+      if (!img.getAttribute('src')) {
+        img.src = img.dataset.src;
+      }
+      img.removeAttribute('data-src');
+    });
+  }
+
+  // Strip src from all inactive screens on load so only s1 images download
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.screen:not(.active) img').forEach(function(img) {
+      var src = img.getAttribute('src');
+      if (src) {
+        img.dataset.src = src;
+        img.removeAttribute('src');
+      }
+    });
+  });
+
+  function goTo(from, to) {
+    const fromEl = document.getElementById(from);
+    const toEl   = document.getElementById(to);
+    if (!toEl) return;
+
+    history.push(from);
+    currentScreen = to;
+
+    loadScreenImages(toEl);
+    if (to === 's2') resetCombo();
+
+    // Slide new screen in from right
+    toEl.scrollTop = 0;
+    toEl.classList.remove('slide-left');
+    toEl.classList.add('active');
+
+    // Slide old screen to the left
+    fromEl.classList.add('slide-left');
+    setTimeout(() => {
+      fromEl.classList.remove('active');
+      fromEl.classList.remove('slide-left');
+    }, 380);
+  }
+
+  function goBack(from) {
+    const prev = history.length > 0 ? history.pop() : 's1';
+    const fromEl = document.getElementById(from);
+    const prevEl = document.getElementById(prev);
+    currentScreen = prev;
+
+    loadScreenImages(prevEl);
+
+    // Restore previous screen (already at its scroll position)
+    prevEl.classList.add('active');
+
+    // Slide current screen off to the right
+    fromEl.style.transition = 'transform 0.32s cubic-bezier(0.4,0,0.2,1)';
+    fromEl.style.transform  = 'translateX(100%)';
+    setTimeout(() => {
+      fromEl.classList.remove('active');
+      fromEl.style.transition = '';
+      fromEl.style.transform  = '';
+    }, 320);
+  }
+
+  // ── Hotel selection ──
+  // ── Combo screen ──
+  let comboHotelSelected = false;
+  let comboFlightSelected = false;
+  let comboHotelPrice = 0;
+  let comboFlightPrice = 0;
+  let comboHotelName = '';
+  let comboHotelImg = '';
+
+  function resetCombo() {
+    comboHotelSelected = false;
+    comboFlightSelected = false;
+    document.querySelectorAll('#s2 .hotel-carousel-card').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('#s2 .combo-flight-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('s2-ticket-section').classList.add('section-locked');
+    document.getElementById('s2-ticket-section').classList.remove('unlocked');
+    document.getElementById('s2-ticket-hint').style.display = '';
+    document.getElementById('s2-flights-scroll').style.display = 'none';
+    document.getElementById('s2-skel1').style.display = '';
+    document.getElementById('s2-skel2').style.display = '';
+    document.getElementById('s2-pay-footer').classList.remove('visible');
+    ['s2-tl1','s2-tl2','s2-tl3'].forEach(id => document.getElementById(id).classList.remove('done'));
+    ['s2-tl-line1','s2-tl-line2'].forEach(id => document.getElementById(id).classList.remove('done'));
+  }
+
+  function selectComboHotel(el, name, price, imgSrc) {
+    document.querySelectorAll('#s2 .hotel-carousel-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    comboHotelSelected = true;
+    comboHotelName = name;
+    comboHotelImg = imgSrc;
+    comboHotelPrice = parseInt(price.replace(/[^\d]/g, ''));
+
+    // Mark step 1 done, unlock ticket section
+    document.getElementById('s2-tl1').classList.add('done');
+    document.getElementById('s2-tl-line1').classList.add('done');
+    const section = document.getElementById('s2-ticket-section');
+    section.classList.add('unlocked');
+    section.classList.remove('section-locked');
+    document.getElementById('s2-ticket-hint').style.display = 'none';
+    document.getElementById('s2-skel1').style.display = 'none';
+    document.getElementById('s2-skel2').style.display = 'none';
+    document.getElementById('s2-flights-scroll').style.display = 'flex';
+
+    // Scroll to ticket section
+    setTimeout(() => section.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+    updateComboFooter();
+  }
+
+  function selectComboFlight(el, airline, price) {
+    document.querySelectorAll('#s2 .combo-flight-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    comboFlightSelected = true;
+    comboFlightPrice = parseInt(price.replace(/[^\d]/g, ''));
+
+    // Mark step 2 done
+    document.getElementById('s2-tl2').classList.add('done');
+    document.getElementById('s2-tl-line2').classList.add('done');
+    document.getElementById('s2-tl3').classList.add('done');
+
+    updateComboFooter();
+  }
+
+  function updateComboFooter() {
+    if (!comboHotelSelected || !comboFlightSelected) return;
+    const total = comboHotelPrice + comboFlightPrice;
+    const original = Math.round(total / 0.8);
+    document.getElementById('s2-total-price').textContent = total.toLocaleString('ru') + ' ₽';
+    document.getElementById('s2-total-old').textContent = original.toLocaleString('ru') + ' ₽';
+    document.getElementById('s2-pay-footer').classList.add('visible');
+  }
+
+  function comboGoToPay() {
+    // Populate s6 hotel fields
+    const s6Name = document.getElementById('s6-hotel-name');
+    const s6Img  = document.getElementById('s6-hotel-img');
+    const s3Name = document.getElementById('s3-hotel-name');
+    const s3Img  = document.querySelector('#s3 .hotel-order-img');
+    if (s6Name) s6Name.textContent = comboHotelName;
+    if (s3Name) s3Name.textContent = comboHotelName;
+    if (s6Img && comboHotelImg) { s6Img.removeAttribute('data-src'); s6Img.src = comboHotelImg; }
+    if (s3Img && comboHotelImg) { s3Img.removeAttribute('data-src'); s3Img.src = comboHotelImg; }
+
+    const total = comboHotelPrice + comboFlightPrice;
+    openPayment('s2', 's6', 'Комбо: жильё + билет обратно', '13 − 17 июн · Санкт-Петербург', total.toLocaleString('ru') + ' ₽');
+  }
+
+  // ── Payment screen ──
+  let pendingPayNav = { from: 'spay', to: 's3' };
+
+  function openPayment(fromScreen, toScreen, name, sub, price) {
+    pendingPayNav = { from: fromScreen, to: toScreen };
+    document.getElementById('pay-name').textContent  = name;
+    document.getElementById('pay-sub').textContent   = sub;
+    document.getElementById('pay-price').textContent = price;
+    document.getElementById('pay-btn-text').textContent = 'Оплатить ' + price;
+    const btn = document.getElementById('pay-btn');
+    btn.classList.remove('loading');
+    goTo(fromScreen, 'spay');
+  }
+
+  function confirmPayment() {
+    const btn = document.getElementById('pay-btn');
+    btn.classList.add('loading');
+    setTimeout(() => {
+      goTo('spay', pendingPayNav.to);
+    }, 1800);
+  }
+
+  function selectPayMethod(el) {
+    document.querySelectorAll('#spay .pay-radio').forEach(r => r.classList.remove('selected'));
+    el.querySelector('.pay-radio').classList.add('selected');
+  }
+
+  function selectHotel(name, price, imgSrc) {
+    // Update screen 3 hotel details
+    const nameEl  = document.getElementById('s3-hotel-name');
+    const s6Name  = document.getElementById('s6-hotel-name');
+    const s6Img   = document.getElementById('s6-hotel-img');
+    if (nameEl)  nameEl.textContent = name;
+    if (s6Name)  s6Name.textContent = name;
+    if (s6Img && imgSrc) {
+      s6Img.removeAttribute('data-src');
+      s6Img.src = imgSrc;
+    }
+
+    // Also update hotel image in screen 3 scroll card
+    const s3Img = document.querySelector('#s3 .hotel-order-img');
+    if (s3Img && imgSrc) {
+      s3Img.removeAttribute('data-src');
+      s3Img.src = imgSrc;
+    }
+
+    openPayment('s4', 's3', name, '13 − 17 июн, 4 ночи', price);
+  }
+
+  // ── Transport selection ──
+  let selectedTransport = '';
+  function selectTransport(type) {
+    selectedTransport = type;
+    const s6Transport = document.getElementById('s6-transport');
+    if (s6Transport) {
+      if (type === 'Самолёт')      s6Transport.textContent = 'SU206';
+      else if (type === 'Поезд')   s6Transport.textContent = '004А';
+      else if (type === 'Автобус') s6Transport.textContent = 'Рейс 1284';
+    }
+    const prices = { 'Самолёт': '6 856 ₽', 'Поезд': '6 026 ₽', 'Автобус': '5 000 ₽' };
+    openPayment('s5', 's6', 'Билет обратно в Москву', '17 июн, вт · Санкт-Петербург → Москва', prices[type] || '5 000 ₽');
+  }
+
+  // ── Chip selection ──
+  function selectChip(el) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
